@@ -269,6 +269,7 @@ function initSubmit(){
     if (!queue.length) return toast('清單是空的');
 
     const userId = await getUserIdSafely(); // 可為 null
+    dbg('送出前 userId = ' + userId);  // 👈 新增這行
     const payload = { source:'LIFF', userId, items: queue };
 
     // 呼叫後端 GAS 函式：saveItemsFromClient（你等下會貼在 Code.gs）
@@ -303,3 +304,4 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+

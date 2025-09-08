@@ -286,16 +286,6 @@ function initSubmit(){
 }
 
 function boot(){ initTabs(); initBP(); initGlu(); initOthers(); initSubmit(); renderList(); }
-// 初始化 LIFF 並強制登入
-window.addEventListener('DOMContentLoaded', async () => {
-  const LIFF_ID = '2008049339-GDpDJd3j'; // ← 這就是你現在在用的 ID，不用改
-  await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
-
-  if (!liff.isLoggedIn()) {
-    liff.login({ redirectUri: location.href.split('#')[0] });
-  }
-});
-
 document.addEventListener('DOMContentLoaded', boot);
 
 // 把 JS 錯誤顯示在畫面頂端（方便除錯）
@@ -303,3 +293,4 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+

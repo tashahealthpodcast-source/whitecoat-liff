@@ -261,7 +261,6 @@ async function getUserIdSafely(){
   }
 }
 
-/* ===== 送出（改用 google.script.run，不走 fetch） ===== */
 function initSubmit(){
   $('#btnClear').addEventListener('click',()=>{ queue.length=0; renderList(); });
 
@@ -271,17 +270,26 @@ function initSubmit(){
     const userId = await getUserIdSafely(); // 可為 null
     const payload = { source:'LIFF', userId, items: queue };
 
-    // 呼叫後端 GAS 函式：saveItemsFromClient（你等下會貼在 Code.gs）
-    google.script.run
-      .withSuccessHandler(res=>{
-        toast('已送出！'); queue.length=0; renderList();
+    dbg('送出前 userId = ' + userId);  // 偵錯：顯示 userId
+
+    try {
+      const res = await fetch(basePostUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.status === 'OK'){
+        toast('已送出！'); queue.length = 0; renderList();
         try{ liff.closeWindow(); }catch(e){}
-      })
-      .withFailureHandler(err=>{
-        dbg('[ERR] ' + (err && err.message ? err.message : JSON.stringify(err)));
-        toast('送出失敗，稍後再試');
-      })
-      .saveItemsFromClient(payload);
+      } else {
+        dbg('[ERR] ' + JSON.stringify(json));
+        toast('送出失敗（非 OK）');
+      }
+    } catch (err){
+      dbg('[ERR] ' + (err.message || JSON.stringify(err)));
+      toast('送出失敗');
+    }
   });
 }
 
@@ -293,4 +301,5 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 

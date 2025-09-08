@@ -270,7 +270,8 @@ function initSubmit(){
     const userId = await getUserIdSafely(); // 可為 null
     const payload = { source:'LIFF', userId, items: queue };
 
-    dbg('送出前 userId = ' + userId);  // 偵錯：顯示 userId
+    dbg('送出前 userId = ' + userId);
+    dbg('📦 payload:\n' + JSON.stringify(payload, null, 2));
 
     try {
       const res = await fetch(basePostUrl(), {
@@ -301,5 +302,6 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 
 

@@ -262,36 +262,37 @@ async function getUserIdSafely(){
 }
 
 function initSubmit(){
-  $('#btnClear').addEventListener('click',()=>{ queue.length=0; renderList(); });
-
+  $('#btnClear').addEventListener('click', ()=>{ queue.length = 0; renderList(); });
   $('#btnSubmit').addEventListener('click', async ()=>{
-    if (!queue.length) return toast('清單是空的');
+  if (!queue.length) return toast('清單是空的');
 
-    const userId = await getUserIdSafely(); // 可為 null
-    const payload = { source:'LIFF', userId, items: queue };
+  const userId = await getUserIdSafely(); // 從 LIFF 抓 userId
+  const payload = { source: 'LIFF', userId, items: queue }; // ✅ 先宣告 payload
 
-    dbg('送出前 userId = ' + userId);
-    dbg('📦 payload:\n' + JSON.stringify(payload, null, 2));
+  dbg('📦 payload:\n' + JSON.stringify(payload, null, 2)); // ✅ 再印出來
+  dbg('送出前 userId = ' + userId);  // ✅ 印 userId
 
-    try {
-      const res = await fetch(basePostUrl(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
-      if (json.status === 'OK'){
-        toast('已送出！'); queue.length = 0; renderList();
-        try{ liff.closeWindow(); }catch(e){}
-      } else {
-        dbg('[ERR] ' + JSON.stringify(json));
-        toast('送出失敗（非 OK）');
-      }
-    } catch (err){
-      dbg('[ERR] ' + (err.message || JSON.stringify(err)));
-      toast('送出失敗');
+  try {
+    const res = await fetch('https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const json = await res.json();
+    if (json.status === 'OK'){
+      toast('已送出！'); queue.length = 0; renderList();
+      try{ liff.closeWindow(); }catch(e){}
+    } else {
+      dbg('[ERR] ' + JSON.stringify(json));
+      toast('送出失敗（非 OK）');
     }
-  });
+  } catch (err){
+    dbg('[ERR] ' + (err.message || JSON.stringify(err)));
+    toast('送出失敗');
+  }
+});
+
 }
 
 function boot(){ initTabs(); initBP(); initGlu(); initOthers(); initSubmit(); renderList(); }
@@ -302,6 +303,7 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 
 
 

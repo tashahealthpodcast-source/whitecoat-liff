@@ -274,7 +274,7 @@ function initSubmit(){
     dbg('送出前 userId = ' + userId);  // 偵錯：顯示 userId
 
     try {
-      const res = await fetch('https://script.google.com/macros/s/YOUR_DEPLOY_URL/exec', {
+      const res = await fetch('https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -314,3 +314,4 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+

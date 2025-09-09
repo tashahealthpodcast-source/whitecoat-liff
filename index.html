@@ -208,91 +208,43 @@ function initOthers(){
     grid.appendChild(wrap);
   });
 }
-/* ===== LIFF（穩健取得 userId；自動登入；三種fallback；含偵錯）===== */
+
+/* ===== LIFF（拿 userId；失敗也不擋送出） ===== */
 async function getUserIdSafely(){
-  const LIFF_ID = '2008049339-GDpDJd3j';
-  const d = (m)=>{
-    const el = document.getElementById('debug');
-    if (el){ el.hidden = false; el.textContent = String(m); }
-    console.log('[LIFF]', m);
-  };
-
   try{
-    // init（保留你原本的 timeout 與 external browser 設定）
-    const initP = liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
-    const timer = new Promise((_,rej)=> setTimeout(()=>rej(new Error('LIFF init timeout')), 6000));
-    await Promise.race([initP, timer]);
-    await (liff.ready || Promise.resolve());
-
-    d(`isInClient=${liff.isInClient ? liff.isInClient() : 'n/a'}, isLoggedIn=${liff.isLoggedIn ? liff.isLoggedIn() : 'n/a'}`);
-
-    // ✅ 1) 先用 getContext（在 LINE App 內最穩）
-    try{
-      const ctx = liff.getContext && liff.getContext();
-      if (ctx && ctx.userId){ d('userId via getContext'); return ctx.userId; }
-    }catch(e){ /* ignore */ }
-
-    // ✅ 2) 若不在 App 內，先確保登入；指定 redirectUri 回到同一頁
-    if (typeof liff.isLoggedIn === 'function' && !liff.isLoggedIn()){
-      d('尚未登入 → liff.login() with redirectUri');
-      const redirectUri = location.href.split('#')[0]; // 回到同一頁（去掉 hash）
-      liff.login({ redirectUri }); // scope 由 Login Channel 設定（需含 openid, profile）
-      return null; // login 會重新載入頁面
-    }
-  
-    // ✅ 3) 已登入：getProfile（需 Login Channel 勾選 profile scope）
-    try{
-      const prof = await liff.getProfile();
-      if (prof && prof.userId){ d('userId via getProfile'); return prof.userId; }
-    }catch(e){ /* ignore */ }
-
-    // ✅ 4) 最後備援：ID Token（需 openid）
-    try{
-      const idt = liff.getDecodedIDToken && liff.getDecodedIDToken();
-      if (idt && idt.sub){ d('userId via decodedIDToken.sub'); return idt.sub; }
-    }catch(e){ /* ignore */ }
-
-    d('仍未取得 userId（不影響寫入）');
-    return null;
-
+    const init = liff.init({ liffId: '2008049339-GDpDJd3j' });
+    const timer = new Promise((_,rej)=> setTimeout(()=>rej(new Error('LIFF init timeout')), 3000));
+    await Promise.race([init, timer]);
+    const ctx = liff.getContext && liff.getContext();
+    return (ctx && ctx.userId) ? ctx.userId : null;
   }catch(e){
-    d('LIFF 取 userId 失敗（不影響寫入）：' + (e.message || e));
+    dbg('[DEBUG] LIFF 未取到 userId（不影響寫入）：' + (e.message||e));
     return null;
   }
 }
 
+/* ===== 送出（改用 google.script.run，不走 fetch） ===== */
 function initSubmit(){
-  $('#btnClear').addEventListener('click', ()=>{ queue.length = 0; renderList(); });
+  $('#btnClear').addEventListener('click',()=>{ queue.length=0; renderList(); });
+
   $('#btnSubmit').addEventListener('click', async ()=>{
-  if (!queue.length) return toast('清單是空的');
+    if (!queue.length) return toast('清單是空的');
 
-  const userId = await getUserIdSafely(); // 從 LIFF 抓 userId
-  const payload = { source: 'LIFF', userId, items: queue }; // ✅ 先宣告 payload
+    const userId = await getUserIdSafely(); // 可為 null
+    const payload = { source:'LIFF', userId, items: queue };
 
-  dbg('📦 payload:\n' + JSON.stringify(payload, null, 2)); // ✅ 再印出來
-  dbg('送出前 userId = ' + userId);  // ✅ 印 userId
-
-  try {
-    const res = await fetch('https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const json = await res.json();
-    if (json.status === 'OK'){
-      toast('已送出！'); queue.length = 0; renderList();
-      try{ liff.closeWindow(); }catch(e){}
-    } else {
-      dbg('[ERR] ' + JSON.stringify(json));
-      toast('送出失敗（非 OK）');
-    }
-  } catch (err){
-    dbg('[ERR] ' + (err.message || JSON.stringify(err)));
-    toast('送出失敗');
-  }
-});
-
+    // 呼叫後端 GAS 函式：saveItemsFromClient（你等下會貼在 Code.gs）
+    google.script.run
+      .withSuccessHandler(res=>{
+        toast('已送出！'); queue.length=0; renderList();
+        try{ liff.closeWindow(); }catch(e){}
+      })
+      .withFailureHandler(err=>{
+        dbg('[ERR] ' + (err && err.message ? err.message : JSON.stringify(err)));
+        toast('送出失敗，稍後再試');
+      })
+      .saveItemsFromClient(payload);
+  });
 }
 
 function boot(){ initTabs(); initBP(); initGlu(); initOthers(); initSubmit(); renderList(); }
@@ -303,7 +255,3 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
-
-
-
-

@@ -37,7 +37,6 @@
 </head>
 <body>
 <div class="wrap">
-  <!-- Debug（需要時會顯示狀態；不用管它） -->
   <div id="debug" hidden></div>
 
   <div class="tabs">
@@ -47,7 +46,6 @@
     <button class="tab" data-pane="pane-queue">清單</button>
   </div>
 
-  <!-- 共用：時間與備註 -->
   <div class="card">
     <div class="title">時間與備註（可選）</div>
     <div class="row">
@@ -57,7 +55,6 @@
     <div class="hint">未選時間則預設為現在。</div>
   </div>
 
-  <!-- 血壓 -->
   <div id="pane-bp" class="pane card">
     <div class="title">血壓（mmHg）</div>
     <div class="hint">先選收縮壓，再選舒張壓；或輸入自訂數字。</div>
@@ -74,7 +71,6 @@
     </div>
   </div>
 
-  <!-- 血糖 -->
   <div id="pane-glu" class="pane card" hidden>
     <div class="title">血糖（mg/dL）</div>
     <div class="hint">選擇時段與範圍；或自訂數字。</div>
@@ -93,13 +89,11 @@
     </div>
   </div>
 
-  <!-- 其他 -->
   <div id="pane-more" class="pane card" hidden>
     <div class="title">其他</div>
     <div class="grid" id="quickGrid"></div>
   </div>
 
-  <!-- 清單 -->
   <div id="pane-queue" class="pane card" hidden>
     <div class="title">待送出清單</div>
     <div id="list"></div>
@@ -114,7 +108,6 @@
 </div>
 
 <script>
-/* ===== 可調整的「範圍與快捷」 ===== */
 const CONFIG = {
   bpSys: ['90–109','110–119','120–129','130–139','140–159','≥160'],
   bpDia: ['60–69','70–79','80–89','90–99','≥100'],
@@ -126,11 +119,10 @@ const CONFIG = {
     { metric:'體脂', unit:'%',    choices:['18–20','21–23','24–26','27–29','30–32','33–35','≥36'] },
     { metric:'喝水', unit:'ml',   choices:[200,500,1000,1500,2000,2500,'≥3000'] },
     { metric:'運動', unit:'min',  choices:[10,20,30,45,60,90,'≥91'] },
-    { metric:'睡眠', unit:'/10',  choices:[1,2,3,4,5,6,7,8,9,10] }  // 睡眠品質 1~10
+    { metric:'睡眠', unit:'/10',  choices:[1,2,3,4,5,6,7,8,9,10] }
   ]
 };
 
-/* ===== 小工具 ===== */
 const $ = s => document.querySelector(s);
 const dbg = t => { const el = $('#debug'); if (!el) return; el.hidden = false; el.textContent = String(t); };
 const toast = t => { const el=$('#toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1200); };
@@ -144,7 +136,6 @@ function midFromRange(label){
 }
 function basePostUrl(){ return location.href.replace(/\?.*$/, ''); }
 
-/* ===== 資料暫存清單 ===== */
 const queue = [];
 function addItem(item){ queue.push(item); renderList(); toast('已加入清單'); }
 function renderList(){
@@ -157,7 +148,6 @@ function renderList(){
     </div>`).join('');
 }
 
-/* ===== 版面初始化 ===== */
 function initTabs(){
   document.querySelectorAll('.tab').forEach(btn=>{
     btn.addEventListener('click',()=>{
@@ -208,8 +198,6 @@ function initOthers(){
     grid.appendChild(wrap);
   });
 }
-
-/* ===== 修正 initSubmit()：保證正常送出 ===== */
 function initSubmit(){
   $('#btnClear').addEventListener('click', () => {
     queue.length = 0;
@@ -259,3 +247,30 @@ function initSubmit(){
     }
   });
 }
+
+// ===== Boot 起手式 =====
+function boot() {
+  initTabs();
+  initBP();
+  initGlu();
+  initOthers();
+  initSubmit();
+  renderList();
+}
+
+// ===== 初始化 LIFF 並登入 =====
+window.addEventListener('DOMContentLoaded', async () => {
+  const LIFF_ID = '2008049339-GDpDJd3j'; // ← 換成你自己的 LIFF ID
+  await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
+
+  if (!liff.isLoggedIn()) {
+    liff.login({ redirectUri: location.href.split('#')[0] });
+  } else {
+    boot();
+  }
+});
+
+window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString())));
+</script>
+</body>
+</html>

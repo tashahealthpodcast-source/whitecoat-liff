@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>LIFF 測試</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body style="font-family:sans-serif;padding:2em;line-height:1.5">
+  <h2>🔍 LIFF 測試頁面</h2>
+  <div id="result">正在初始化 LIFF...</div>
+
+  <script>
+    const LIFF_ID = '2008049339-GDpDJd3j'; // ←換成你的 LIFF ID
+
+    async function initLiff() {
+      try {
+        await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
+
+        if (!liff.isLoggedIn()) {
+          document.getElementById('result').innerHTML = '尚未登入，正在重新導向登入...';
+          liff.login({ redirectUri: location.href.split('#')[0] });
+          return;
+        }
+
+        const context = liff.getContext();
+        document.getElementById('result').innerHTML = `
+          ✅ 成功初始化<br>
+          <b>userId:</b> ${context.userId || '<i>無法取得</i>'}<br>
+          <b>contextType:</b> ${context.type}
+        `;
+      } catch (err) {
+        document.getElementById('result').innerHTML = `
+          ❌ LIFF 初始化失敗<br>
+          <pre>${err.message || err}</pre>
+        `;
+        console.error(err);
+      }
+    }
+
+    initLiff();
+  </script>
+</body>
+</html>

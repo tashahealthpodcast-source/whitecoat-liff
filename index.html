@@ -263,15 +263,20 @@ async function getUserIdSafely(){
 
 <script>
 /* ===== 改為 fetch 傳送資料給 Apps Script（GitHub 用） ===== */
-function initSubmit(){
-  $('#btnClear').addEventListener('click',()=>{ queue.length=0; renderList(); });
+function initSubmit() {
+  $('#btnClear').addEventListener('click', () => {
+    queue.length = 0;
+    renderList();
+  });
 
-  $('#btnSubmit').addEventListener('click', async ()=>{
+  $('#btnSubmit').addEventListener('click', async () => {
     if (!queue.length) return toast('清單是空的');
 
     const userId = await getUserIdSafely(); // 可為 null
-    const payload = { source:'LIFF', userId, items: queue };
-    dbg('送出前 userId = ' + userId);  // 偵錯：顯示 userId
+    const payload = { source: 'LIFF', userId, items: queue };
+
+    dbg('送出前 userId = ' + userId); // 偵錯用
+    dbg('📦 payload:\n' + JSON.stringify(payload, null, 2));
 
     try {
       const res = await fetch('https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec', {
@@ -279,16 +284,18 @@ function initSubmit(){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
       const json = await res.json();
-      if (json.status === 'OK'){
-        toast('已送出！'); queue.length = 0; renderList();
-        try{ liff.closeWindow(); }catch(e){}
+
+      if (json.status === 'OK') {
+        toast('已送出！');
+        queue.length = 0;
+        renderList();
+        try { liff.closeWindow(); } catch (e) {}
       } else {
         dbg('[ERR] ' + JSON.stringify(json));
         toast('送出失敗（非 OK）');
       }
-    } catch (err){
+    } catch (err) {
       dbg('[ERR] ' + (err.message || JSON.stringify(err)));
       toast('送出失敗');
     }
@@ -314,4 +321,5 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 

@@ -269,10 +269,11 @@ function initSubmit() {
   });
 
   $('#btnSubmit').addEventListener('click', async () => {
-    if (!queue.length) return toast('清單是空的');
+  if (!queue.length) return toast('清單是空的');
 
-    const userId = await getUserIdSafely(); // 可為 null
-    const payload = { source: 'LIFF', userId, items: queue };
+  // 🔧 直接指定 userId 來測試（這樣可排除 LIFF 問題）
+  const userId = 'test-debug-user';
+  const payload = { source: 'LIFF', userId, items: queue };
 
     dbg('送出前 userId = ' + userId); // 偵錯用
     dbg('📦 payload:\n' + JSON.stringify(payload, null, 2));
@@ -319,6 +320,7 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 
 
 

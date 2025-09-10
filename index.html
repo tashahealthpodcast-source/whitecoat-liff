@@ -113,10 +113,69 @@ function initTabs(){document.querySelectorAll('.tab').forEach(btn=>{btn.addEvent
 function initBP(){fillSelect($('#bpSys'),CONFIG.bpSys);fillSelect($('#bpDia'),CONFIG.bpDia);$('#btnAddBp').addEventListener('click',()=>{const sys=$('#bpSysManual').value||$('#bpSys').value;const dia=$('#bpDiaManual').value||$('#bpDia').value;const sysVal=isNaN(Number(sys))?midFromRange(sys):Number(sys);const diaVal=isNaN(Number(dia))?midFromRange(dia):Number(dia);addItem({metric:'血壓',value:`${sysVal}/${diaVal}`,unit:'mmHg',note:$('#note').value,time:$('#when').value});});}
 function initGlu(){const ctxSel=$('#gluCtx'),rangeSel=$('#gluRange');const updateRanges=()=>fillSelect(rangeSel,ctxSel.value==='空腹'?CONFIG.gluFPG:CONFIG.gluPPG);ctxSel.addEventListener('change',updateRanges);updateRanges();$('#btnAddGlu').addEventListener('click',()=>{const ctx=ctxSel.value;let v=$('#gluManual').value;if(!v)v=midFromRange(rangeSel.value);addItem({metric:ctx==='空腹'?'空腹血糖':'飯後血糖',value:Number(v),unit:'mg/dL',ctx,note:$('#note').value,time:$('#when').value});});}
 function initOthers(){const grid=$('#quickGrid');grid.innerHTML='';CONFIG.quickOthers.forEach(block=>{const wrap=document.createElement('div');wrap.className='card';wrap.style.margin='0';wrap.style.gridColumn='1/-1';const title=(block.metric==='睡眠')?'睡眠品質（1–10 分）':`${block.metric}（${block.unit}）`;wrap.innerHTML=`<div class="title">${title}</div><div class="grid"></div>`;const g=wrap.querySelector('.grid');block.choices.forEach(v=>{const b=document.createElement('button');b.className='btn ghost';b.textContent=v+block.unit;b.addEventListener('click',()=>addItem({metric:block.metric,value:v,unit:block.unit,note:$('#note').value,time:$('#when').value}));g.appendChild(b);});grid.appendChild(wrap);});}
-function initSubmit(){$('#btnClear').addEventListener('click',()=>{queue.length=0;renderList();});$('#btnSubmit').addEventListener('click',async()=>{if(!queue.length)return toast('清單是空的');let userId=null;try{const context=await liff.getContext();userId=context.userId||null;}catch(e){console.warn('❌ 無法取得 userId，將使用 null');}const payload={source:'LIFF',userId,items:queue};dbg('📦 payload:\n'+JSON.stringify(payload,null,2));try{const res=await fetch(basePostUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const json=await res.json();if(json.status==='OK'){toast('✅ 已送出！');queue.length=0;renderList();try{liff.closeWindow();}catch(e){}}else{dbg('[ERR] '+JSON.stringify(json));toast('❌ 送出失敗（非 OK）');}}catch(err){console.error('❌ 發送失敗:',err);dbg('[ERR] '+(err.message||JSON.stringify(err)));toast('❌ 發送失敗');}});}
+async function initSubmit() {
+  try {
+    // 1. 確保 LIFF 已初始化
+    if (!liff.isInClient() && !liff.isLoggedIn()) {
+      liff.login({ withLoginOnExternalBrowser: true });
+      return;
+    }
+
+    // 2. 取得使用者資訊（用 getProfile，保證拿到 userId + displayName）
+    let userId = null, displayName = '';
+    try {
+      const profile = await liff.getProfile();
+      userId = profile.userId;
+      displayName = profile.displayName;
+    } catch (e) {
+      console.warn('getProfile error:', e);
+    }
+
+    // 3. 準備 payload
+    const payload = {
+      source: 'LIFF',
+      userId: userId,
+      displayName: displayName,
+      items: queue   // queue 內已有各項紀錄
+    };
+
+    // 4. 送到 GAS WebApp
+    const res = await fetch(basePostUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const txt = await res.text();
+
+    // 5. 除錯輸出
+    dbg('Payload: ' + JSON.stringify(payload));
+    dbg('Response: ' + txt);
+
+    // 6. 清空 queue
+    queue.length = 0;
+
+    // 7. 顯示成功訊息
+    alert('✅ 已送出紀錄！');
+
+  } catch (err) {
+    console.error('initSubmit error:', err);
+    dbg('Error: ' + err);
+    alert('❌ 送出失敗，請稍後再試');
+  }
+}
+const res = await fetch(basePostUrl(), {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+});
+const txt = await res.text();
+console.log('GAS response:', txt);
+dbg('Response: ' + txt);
+
 function boot(){initTabs();initBP();initGlu();initOthers();initSubmit();renderList();}
 window.addEventListener('DOMContentLoaded',async()=>{const LIFF_ID='2008049339-GDpDJd3j';await liff.init({liffId:LIFF_ID,withLoginOnExternalBrowser:true});if(!liff.isLoggedIn()){liff.login({redirectUri:location.href.split('#')[0]});}else{boot();}});
 window.addEventListener('error',e=>dbg('[ERROR] '+(e.message||e.toString())));
 </script>
 </body>
 </html>
+

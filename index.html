@@ -199,6 +199,7 @@ async function initSubmit(){
 }
 
 async function main(){
+  console.log("🚀 main() 啟動");   
   await liff.init({ liffId:"2008049339-GDpDJd3j", withLoginOnExternalBrowser:true });
   if(!liff.isLoggedIn()){
     liff.login({ redirectUri: location.href.split('#')[0] });
@@ -215,4 +216,5 @@ main();
 </script>
 </body>
 </html>
+
 

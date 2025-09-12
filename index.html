@@ -100,17 +100,17 @@ textarea{min-height:54px}
 </div>
 <script>
 const CONFIG = {
-bpSys: [\'90–109\',\'110–119\',\'120–129\',\'130–139\',\'140–159\',\'≥160\'],
-bpDia: [\'60–69\',\'70–79\',\'80–89\',\'90–99\',\'≥100\'],
-gluFPG: [\'70–80\',\'81–90\',\'91–100\',\'101–110\',\'111–125\',\'≥126\'],
-gluPPG: [\'90–110\',\'111–139\',\'140–159\',\'160–179\',\'≥180\'],
-quickOthers: [
-{ metric:\'心跳\', unit:\'bpm\', choices:[\'60–70\',\'71–80\',\'81–90\',\'91–100\',\'101–110\',\'≥111\'] },
-{ metric:\'體重\', unit:\'kg\', choices:[\'45–55\',\'56–60\',\'61–65\',\'66–70\',\'71–75\',\'76–80\',\'81–85\',\'86–90\',\'≥91\'] },
-{ metric:\'體脂\', unit:\'%\', choices:[\'18–20\',\'21–23\',\'24–26\',\'27–29\',\'30–32\',\'33–35\',\'≥36\'] },
-{ metric:\'喝水\', unit:\'ml\', choices:[200,500,1000,1500,2000,2500,\'≥3000\'] },
-{ metric:\'運動\', unit:\'min\', choices:[10,20,30,45,60,90,\'≥91\'] },
-{ metric:\'睡眠\', unit:\'/10\', choices:[1,2,3,4,5,6,7,8,9,10] }
+  bpSys: ['90-109','110-119','120-129','130-139','140-159','≥160'],
+  bpDia: ['60-69','70-79','80-89','90-99','≥100'],
+  gluFPG: ['70-80','81-90','91-100','101-110','111-125','≥126'],
+  gluPPG: ['90-110','111-139','140-159','160-179','≥180'],
+  quickOthers: [
+    { metric:'心跳', unit:'bpm', choices:['60-70','71-80','81-90','91-100','101-110','≥111'] },
+    { metric:'體重', unit:'kg', choices:['45-55','56-60','61-65','66-70','71-75','76-80','81-85','86-90','≥91'] },
+    { metric:'體脂', unit:'%', choices:['18-20','21-23','24-26','27-29','30-32','33-35','≥36'] },
+    { metric:\'喝水\', unit:\'ml\', choices:[200,500,1000,1500,2000,2500,\'≥3000\'] },
+    { metric:\'運動\', unit:\'min\', choices:[10,20,30,45,60,90,\'≥91\'] },
+    { metric:\'睡眠\', unit:\'/10\', choices:[1,2,3,4,5,6,7,8,9,10] }
 ]
 };
 const $ = s => document.querySelector(s);
@@ -122,7 +122,7 @@ function midFromRange(label){ if(typeof label==='number') return label; label=St
 function basePostUrl(){ return "https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec"; }
 function renderList(){ const box=$('#list'); if(!queue.length) { box.innerHTML='<div class="hint">目前沒有待送出的資料。</div>'; return; } box.innerHTML = queue.map((it,i)=>`<div class="row" style="justify-content:space-between;border-bottom:1px dashed #e6ecf7;padding:10px 0;"><div>${it.metric}：<b>${it.value}</b> ${it.unit||''} ${it.ctx?`<span class="hint">(${it.ctx})</span>`:''}</div><button class="btn ghost" onclick="queue.splice(${i},1);renderList()">移除</button></div>`).join(''); }
 function addItem(item){ queue.push(item); renderList(); toast('已加入清單'); }
-function initTabs(){ document.querySelectorAll('.tab').forEach(btn=>{ btn.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const pane=btn.dataset.pane; document.querySelectorAll('.pane').forEach(p=>p.hidden=(p.id!==pane)); }); }); }
+function initTabs(){ document.querySelectorAll('.tab').forEach(btn=>{ btn.addEventListener('click', ()=>{ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const pane=btn.dataset.pane; document.querySelectorAll('.pane').forEach(p=>p.hidden = (p.id !== pane);); }); }); }
 function initBP(){ fillSelect($('#bpSys'), CONFIG.bpSys); fillSelect($('#bpDia'), CONFIG.bpDia); $('#btnAddBp').addEventListener('click',()=>{
 const sys=$('#bpSysManual').value||$('#bpSys').value; const dia=$('#bpDiaManual').value||$('#bpDia').value; const sysVal=isNaN(Number(sys))?midFromRange(sys):Number(sys); const diaVal=isNaN(Number(dia))?midFromRange(dia):Number(dia);
 addItem({metric:'血壓',value:`${sysVal}/${diaVal}`,unit:'mmHg',note:$('#note').value,time:$('#when').value}); }); }
@@ -195,4 +195,5 @@ window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString(
 </script>
 </body>
 </html>
+
 

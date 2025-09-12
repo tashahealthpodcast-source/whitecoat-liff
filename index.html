@@ -1,247 +1,148 @@
- <title>數據輸入</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <style>
-    :root {
-    :root{
-      --fz: clamp(20px, 3vh, 26px);
-      --fz-sm: clamp(18px, 2.5vh, 22px);
-      --gap: 14px;
-      --btn-pad: 20px;
-      --radius: 14px;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: #f6f8fb;
-      color: #111;
-      font-size: var(--fz);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', 'PingFang TC', sans-serif;
-    }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
-    .tabs { display: flex; gap: 8px; margin-bottom: 10px; position: sticky; top: 0; background: #f6f8fb; padding-top: 6px; z-index: 10 }
-    .tab { flex: 1; text-align: center; padding: 12px; border-radius: 12px; border: 2px solid #d9e1f2; background: #fff; font-weight: 700; font-size: var(--fz) }
-    .tab.active { background: #2f6fed; color: #fff; border-color: #2f6fed }
-    .card { background: #fff; border-radius: 16px; border: 1px solid #e6ecf7; padding: 18px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,.05) }
-    .title { font-weight: 800; margin-bottom: 8px }
-    .hint { color: #6b7280; font-size: var(--fz-sm); margin: 4px 0 12px }
-    .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px }
-    .btn { display: inline-block; border: 2px solid #2f6fed; background: #2f6fed; color: #fff; border-radius: 14px; padding: var(--btn-pad); text-align: center; font-weight: 700; font-size: 1.1em }
-    .btn.ghost { background: #fff; color: #2f6fed }
-    .row { display: flex; gap: 12px; align-items: center; margin: 8px 0 }
-    input, select, textarea { width: 100%; font-size: var(--fz); padding: 14px; border-radius: 10px; border: 1px solid #c9d4ee; background: #fff }
-    textarea { min-height: 54px }
-    .actions { position: sticky; bottom: 0; background: #f6f8fb; padding: 12px 0; margin-top: 12px; display: flex; gap: 12px }
-    .actions .btn { flex: 1; text-align: center }
-    .toast { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); background: #111; color: #fff; padding: 10px 14px; border-radius: 999px; font-size: var(--fz-sm); opacity: 0; transition: .25s }
-    .toast.show { opacity: 1 }
-    #debug { background: #ffeeba; color: #333; font-size: 14px; padding: 6px 10px; margin-bottom: 10px; border-radius: 8px; white-space: pre-line }
-    html,body{margin:0;padding:0;background:#f6f8fb;color:#111;font-size:var(--fz);
-      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans TC','PingFang TC',sans-serif;}
-    .wrap{max-width:720px;margin:0 auto;padding:16px;}
-    .tabs{display:flex;gap:8px;margin-bottom:10px;position:sticky;top:0;background:#f6f8fb;padding-top:6px;z-index:10}
-    .tab{flex:1;text-align:center;padding:12px;border-radius:12px;border:2px solid #d9e1f2;background:#fff;font-weight:700;font-size:var(--fz)}
-    .tab.active{background:#2f6fed;color:#fff;border-color:#2f6fed}
-    .card{background:#fff;border-radius:16px;border:1px solid #e6ecf7;padding:18px;margin-bottom:14px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
-    .title{font-weight:800;margin-bottom:8px}
-    .hint{color:#6b7280;font-size:var(--fz-sm);margin:4px 0 12px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .btn{display:inline-block;border:2px solid #2f6fed;background:#2f6fed;color:#fff;border-radius:14px;padding:var(--btn-pad);text-align:center;font-weight:700;font-size:1.1em}
-    .btn.ghost{background:#fff;color:#2f6fed}
-    .row{display:flex;gap:12px;align-items:center;margin:8px 0}
-    input,select,textarea{width:100%;font-size:var(--fz);padding:14px;border-radius:10px;border:1px solid #c9d4ee;background:#fff}
-    textarea{min-height:54px}
-    .actions{position:sticky;bottom:0;background:#f6f8fb;padding:12px 0;margin-top:12px;display:flex;gap:12px}
-    .actions .btn{flex:1;text-align:center}
-    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:var(--fz-sm);opacity:0;transition:.25s}
-    .toast.show{opacity:1}
-    #debug{background:#ffeeba;color:#333;font-size:14px;padding:6px 10px;margin-bottom:10px;border-radius:8px;white-space:pre-line}
-  </style>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>數據輸入</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+:root{
+--fz: clamp(20px, 3vh, 26px);
+--fz-sm: clamp(18px, 2.5vh, 22px);
+--gap: 14px;
+--btn-pad: 20px;
+--radius: 14px;
+}
+html,body{margin:0;padding:0;background:#f6f8fb;color:#111;font-size:var(--fz);
+font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,\'Noto Sans TC\',\'PingFang TC\',sans-serif;}
+.wrap{max-width:720px;margin:0 auto;padding:16px;}
+.tabs{display:flex;gap:8px;margin-bottom:10px;position:sticky;top:0;background:#f6f8fb;padding-top:6px;z-index:10}
+.tab{flex:1;text-align:center;padding:12px;border-radius:12px;border:2px solid #d9e1f2;background:#fff;font-weight:700;font-size:var(--fz)}
+.tab.active{background:#2f6fed;color:#fff;border-color:#2f6fed}
+.card{background:#fff;border-radius:16px;border:1px solid #e6ecf7;padding:18px;margin-bottom:14px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.title{font-weight:800;margin-bottom:8px}
+.hint{color:#6b7280;font-size:var(--fz-sm);margin:4px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.btn{display:inline-block;border:2px solid #2f6fed;background:#2f6fed;color:#fff;border-radius:14px;padding:var(--btn-pad);text-align:center;font-weight:700;font-size:1.1em}
+.btn.ghost{background:#fff;color:#2f6fed}
+.row{display:flex;gap:12px;align-items:center;margin:8px 0}
+input,select,textarea{width:100%;font-size:var(--fz);padding:14px;border-radius:10px;border:1px solid #c9d4ee;background:#fff}
+textarea{min-height:54px}
+.actions{position:sticky;bottom:0;background:#f6f8fb;padding:12px 0;margin-top:12px;display:flex;gap:12px}
+.actions .btn{flex:1;text-align:center}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-size:var(--fz-sm);opacity:0;transition:.25s}
+.toast.show{opacity:1}
+#debug{background:#ffeeba;color:#333;font-size:14px;padding:6px 10px;margin-bottom:10px;border-radius:8px;white-space:pre-line}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="debug" hidden></div>
-
-    <div class="tabs">
-      <button class="tab active" data-pane="pane-bp">血壓</button>
-      <button class="tab" data-pane="pane-glu">血糖</button>
-      <button class="tab" data-pane="pane-more">其他</button>
-      <button class="tab" data-pane="pane-queue">清單</button>
 <div class="wrap">
-  <div id="debug" hidden></div>
-  <div class="tabs">
-    <button class="tab active" data-pane="pane-bp">血壓</button>
-    <button class="tab" data-pane="pane-glu">血糖</button>
-    <button class="tab" data-pane="pane-more">其他</button>
-    <button class="tab" data-pane="pane-queue">清單</button>
-  </div>
-  <div class="card">
-    <div class="title">時間與備註（可選）</div>
-    <div class="row">
-      <input id="when" type="datetime-local">
-      <input id="note" placeholder="備註（選填）">
-    </div>
-
-    <div class="card">
-      <div class="title">時間與備註（可選）</div>
-      <div class="row">
-        <input id="when" type="datetime-local">
-        <input id="note" placeholder="備註（選填）">
-      </div>
-      <div class="hint">未選時間則預設為現在。</div>
-    <div class="hint">未選時間則預設為現在。</div>
-  </div>
-  <div id="pane-bp" class="pane card">
-    <div class="title">血壓（mmHg）</div>
-    <div class="hint">先選收縮壓，再選舒張壓；或輸入自訂數字。</div>
-    <div class="row">
-      <select id="bpSys"></select>
-      <select id="bpDia"></select>
-    </div>
-
-    <div id="pane-bp" class="pane card">
-      <div class="title">血壓（mmHg）</div>
-      <div class="hint">先選收縮壓，再選舒張壓；或輸入自訂數字。</div>
-      <div class="row">
-        <select id="bpSys"></select>
-        <select id="bpDia"></select>
-      </div>
-      <div class="row">
-        <input id="bpSysManual" inputmode="numeric" placeholder="自訂收縮壓">
-        <input id="bpDiaManual" inputmode="numeric" placeholder="自訂舒張壓">
-      </div>
-      <div class="row">
-        <button class="btn" id="btnAddBp">加入清單：血壓</button>
-      </div>
-    <div class="row">
-      <input id="bpSysManual" inputmode="numeric" placeholder="自訂收縮壓">
-      <input id="bpDiaManual" inputmode="numeric" placeholder="自訂舒張壓">
-    </div>
-
-    <div id="pane-glu" class="pane card" hidden>
-      <div class="title">血糖（mg/dL）</div>
-      <div class="hint">選擇時段與範圍；或自訂數字。</div>
-      <div class="row">
-        <select id="gluCtx">
-          <option value="空腹">空腹</option>
-          <option value="飯後">飯後</option>
-        </select>
-        <select id="gluRange"></select>
-      </div>
-      <div class="row">
-        <input id="gluManual" inputmode="numeric" placeholder="自訂數字">
-      </div>
-      <div class="row">
-        <button class="btn" id="btnAddGlu">加入清單：血糖</button>
-      </div>
-    <div class="row">
-      <button class="btn" id="btnAddBp">加入清單：血壓</button>
-    </div>
-
-    <div id="pane-more" class="pane card" hidden>
-      <div class="title">其他</div>
-      <div class="grid" id="quickGrid"></div>
-  </div>
-  <div id="pane-glu" class="pane card" hidden>
-    <div class="title">血糖（mg/dL）</div>
-    <div class="hint">選擇時段與範圍；或自訂數字。</div>
-    <div class="row">
-      <select id="gluCtx">
-        <option value="空腹">空腹</option>
-        <option value="飯後">飯後</option>
-      </select>
-      <select id="gluRange"></select>
-    </div>
-
-    <div id="pane-queue" class="pane card" hidden>
-      <div class="title">待送出清單</div>
-      <div id="list"></div>
-    <div class="row">
-      <input id="gluManual" inputmode="numeric" placeholder="自訂數字">
-    </div>
-
-    <div class="actions">
-      <button class="btn ghost" id="btnClear">清空清單</button>
-      <button class="btn" id="btnSubmit">送出全部</button>
-    <div class="row">
-      <button class="btn" id="btnAddGlu">加入清單：血糖</button>
-    </div>
-
-    <div id="toast" class="toast">已加入</div>
-  </div>
-
-  <div id="pane-more" class="pane card" hidden>
-    <div class="title">其他</div>
-    <div class="grid" id="quickGrid"></div>
-  </div>
-  <div id="pane-queue" class="pane card" hidden>
-    <div class="title">待送出清單</div>
-    <div id="list"></div>
-  </div>
-  <div class="actions">
-    <button class="btn ghost" id="btnClear">清空清單</button>
-    <button class="btn" id="btnSubmit">送出全部</button>
-  </div>
-  <div id="toast" class="toast">已加入</div>
+<div id="debug" hidden></div>
+<div class="tabs">
+<button class="tab active" data-pane="pane-bp">血壓</button>
+<button class="tab" data-pane="pane-glu">血糖</button>
+<button class="tab" data-pane="pane-more">其他</button>
+<button class="tab" data-pane="pane-queue">清單</button>
+</div>
+<div class="card">
+<div class="title">時間與備註（可選）</div>
+<div class="row">
+<input id="when" type="datetime-local">
+<input id="note" placeholder="備註（選填）">
+</div>
+<div class="hint">未選時間則預設為現在。</div>
+</div>
+<div id="pane-bp" class="pane card">
+<div class="title">血壓（mmHg）</div>
+<div class="hint">先選收縮壓，再選舒張壓；或輸入自訂數字。</div>
+<div class="row">
+<select id="bpSys"></select>
+<select id="bpDia"></select>
+</div>
+<div class="row">
+<input id="bpSysManual" inputmode="numeric" placeholder="自訂收縮壓">
+<input id="bpDiaManual" inputmode="numeric" placeholder="自訂舒張壓">
+</div>
+<div class="row">
+<button class="btn" id="btnAddBp">加入清單：血壓</button>
+</div>
+</div>
+<div id="pane-glu" class="pane card" hidden>
+<div class="title">血糖（mg/dL）</div>
+<div class="hint">選擇時段與範圍；或自訂數字。</div>
+<div class="row">
+<select id="gluCtx">
+<option value="空腹">空腹</option>
+<option value="飯後">飯後</option>
+</select>
+<select id="gluRange"></select>
+</div>
+<div class="row">
+<input id="gluManual" inputmode="numeric" placeholder="自訂數字">
+</div>
+<div class="row">
+<button class="btn" id="btnAddGlu">加入清單：血糖</button>
+</div>
+</div>
+<div id="pane-more" class="pane card" hidden>
+<div class="title">其他</div>
+<div class="grid" id="quickGrid"></div>
+</div>
+<div id="pane-queue" class="pane card" hidden>
+<div class="title">待送出清單</div>
+<div id="list"></div>
+</div>
+<div class="actions">
+<button class="btn ghost" id="btnClear">清空清單</button>
+<button class="btn" id="btnSubmit">送出全部</button>
+</div>
+<div id="toast" class="toast">已加入</div>
 </div>
 <script>
 const CONFIG = {
-  bpSys: ['90–109','110–119','120–129','130–139','140–159','≥160'],
-  bpDia: ['60–69','70–79','80–89','90–99','≥100'],
-  gluFPG: ['70–80','81–90','91–100','101–110','111–125','≥126'],
-  gluPPG: ['90–110','111–139','140–159','160–179','≥180'],
-  quickOthers: [
-    { metric:'心跳', unit:'bpm', choices:['60–70','71–80','81–90','91–100','101–110','≥111'] },
-    { metric:'體重', unit:'kg', choices:['45–55','56–60','61–65','66–70','71–75','76–80','81–85','86–90','≥91'] },
-    { metric:'體脂', unit:'%', choices:['18–20','21–23','24–26','27–29','30–32','33–35','≥36'] },
-    { metric:'喝水', unit:'ml', choices:[200,500,1000,1500,2000,2500,'≥3000'] },
-    { metric:'運動', unit:'min', choices:[10,20,30,45,60,90,'≥91'] },
-    { metric:'睡眠', unit:'/10', choices:[1,2,3,4,5,6,7,8,9,10] }
-  ]
+bpSys: [\'90–109\',\'110–119\',\'120–129\',\'130–139\',\'140–159\',\'≥160\'],
+bpDia: [\'60–69\',\'70–79\',\'80–89\',\'90–99\',\'≥100\'],
+gluFPG: [\'70–80\',\'81–90\',\'91–100\',\'101–110\',\'111–125\',\'≥126\'],
+gluPPG: [\'90–110\',\'111–139\',\'140–159\',\'160–179\',\'≥180\'],
+quickOthers: [
+{ metric:\'心跳\', unit:\'bpm\', choices:[\'60–70\',\'71–80\',\'81–90\',\'91–100\',\'101–110\',\'≥111\'] },
+{ metric:\'體重\', unit:\'kg\', choices:[\'45–55\',\'56–60\',\'61–65\',\'66–70\',\'71–75\',\'76–80\',\'81–85\',\'86–90\',\'≥91\'] },
+{ metric:\'體脂\', unit:\'%\', choices:[\'18–20\',\'21–23\',\'24–26\',\'27–29\',\'30–32\',\'33–35\',\'≥36\'] },
+{ metric:\'喝水\', unit:\'ml\', choices:[200,500,1000,1500,2000,2500,\'≥3000\'] },
+{ metric:\'運動\', unit:\'min\', choices:[10,20,30,45,60,90,\'≥91\'] },
+{ metric:\'睡眠\', unit:\'/10\', choices:[1,2,3,4,5,6,7,8,9,10] }
+]
 };
-const CONFIG = {bpSys:['90–109','110–119','120–129','130–139','140–159','≥160'],bpDia:['60–69','70–79','80–89','90–99','≥100'],gluFPG:['70–80','81–90','91–100','101–110','111–125','≥126'],gluPPG:['90–110','111–139','140–159','160–179','≥180'],quickOthers:[{metric:'心跳',unit:'bpm',choices:['60–70','71–80','81–90','91–100','101–110','≥111']},{metric:'體重',unit:'kg',choices:['45–55','56–60','61–65','66–70','71–75','76–80','81–85','86–90','≥91']},{metric:'體脂',unit:'%',choices:['18–20','21–23','24–26','27–29','30–32','33–35','≥36']},{metric:'喝水',unit:'ml',choices:[200,500,1000,1500,2000,2500,'≥3000']},{metric:'運動',unit:'min',choices:[10,20,30,45,60,90,'≥91']},{metric:'睡眠',unit:'/10',choices:[1,2,3,4,5,6,7,8,9,10]}]};
 const $ = s => document.querySelector(s);
-const toast = t => { const el=$('#toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1200); };
-const dbg = t => { const el=$('#debug'); if (!el) return; el.hidden = false; el.textContent = String(t); };
+const toast = t => { const el=$(\'#toast\'); el.textContent=t; el.classList.add(\'show\'); setTimeout(()=>el.classList.remove(\'show\'),1200); };
+const dbg = t => { const el=$(\'#debug\'); if (!el) return; el.hidden = false; el.textContent = String(t); };
 const queue = [];
-function fillSelect(sel, arr){ sel.innerHTML = arr.map(v=>`<option>${v}</option>`).join(''); }
-function midFromRange(label){ if(typeof label==='number') return label; label=String(label||''); if(label.startsWith('≥')) return Number(label.replace(/[^\d]/g,''))+5; if(label.includes('–')){ const[a,b]=label.split('–').map(Number); return Math.round((a+b)/2); } return Number(label.replace(/[^\d]/g,''))||0; }
+function fillSelect(sel, arr){ sel.innerHTML = arr.map(v=>`<option>${v}</option>`).join(\'\'); }
+function midFromRange(label){ if(typeof label===\'number\') return label; label=String(label||\'\'); if(label.startsWith(\'≥\')) return Number(label.replace(/[^\\d]/g,\'\'))+5; if(label.includes(\'–\')) { const[a,b]=label.split(\'–\').map(Number); return Math.round((a+b)/2); } return Number(label.replace(/[^\\d]/g,\'\'))||0; }
 function basePostUrl(){ return "https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec"; }
-function renderList(){ const box=$('#list'); if(!queue.length){ box.innerHTML='<div class="hint">目前沒有待送出的資料。</div>'; return; } box.innerHTML = queue.map((it,i)=>`<div class="row" style="justify-content:space-between;border-bottom:1px dashed #e6ecf7;padding:10px 0;"><div>${it.metric}：<b>${it.value}</b> ${it.unit||''} ${it.ctx?`<span class="hint">(${it.ctx})</span>`:''}</div><button class="btn ghost" onclick="queue.splice(${i},1);renderList()">移除</button></div>`).join(''); }
-function addItem(item){ queue.push(item); renderList(); toast('已加入清單'); }
-function initTabs(){ document.querySelectorAll('.tab').forEach(btn=>{ btn.addEventListener('click',()=>{ document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const pane=btn.dataset.pane; document.querySelectorAll('.pane').forEach(p=>p.hidden=(p.id!==pane)); }); }); }
-function initBP(){ fillSelect($('#bpSys'), CONFIG.bpSys); fillSelect($('#bpDia'), CONFIG.bpDia); $('#btnAddBp').addEventListener('click',()=>{ const sys=$('#bpSysManual').value||$('#bpSys').value; const dia=$('#bpDiaManual').value||$('#bpDia').value; const sysVal=isNaN(Number(sys))?midFromRange(sys):Number(sys); const diaVal=isNaN(Number(dia))?midFromRange(dia):Number(dia); addItem({metric:'血壓',value:`${sysVal}/${diaVal}`,unit:'mmHg',note:$('#note').value,time:$('#when').value}); }); }
-function initGlu(){ const ctxSel=$('#gluCtx'), rangeSel=$('#gluRange'); const updateRanges=()=>fillSelect(rangeSel, ctxSel.value==='空腹'?CONFIG.gluFPG:CONFIG.gluPPG); ctxSel.addEventListener('change',updateRanges); updateRanges(); $('#btnAddGlu').addEventListener('click',()=>{ const ctx=ctxSel.value; let v=$('#gluManual').value; if(!v)v=midFromRange(rangeSel.value); addItem({metric:ctx==='空腹'?'空腹血糖':'飯後血糖',value:Number(v),unit:'mg/dL',ctx,note:$('#note').value,time:$('#when').value}); }); }
-function initOthers(){ const grid=$('#quickGrid'); grid.innerHTML=''; CONFIG.quickOthers.forEach(block=>{ const wrap=document.createElement('div'); wrap.className='card'; wrap.style.margin='0'; wrap.style.gridColumn='1/-1'; const title=(block.metric==='睡眠')?'睡眠品質（1–10 分）':`${block.metric}（${block.unit}）`; wrap.innerHTML=`<div class="title">${title}</div><div class="grid"></div>`; const g=wrap.querySelector('.grid'); block.choices.forEach(v=>{ const b=document.createElement('button'); b.className='btn ghost'; b.textContent=v+block.unit; b.addEventListener('click',()=>addItem({metric:block.metric,value:v,unit:block.unit,note:$('#note').value,time:$('#when').value})); g.appendChild(b); }); grid.appendChild(wrap); }); }
-function initSubmit(){ $('#btnClear').addEventListener('click',()=>{ queue.length=0; renderList(); }); $('#btnSubmit').addEventListener('click',async()=>{ if(!queue.length)return toast('清單是空的'); let userId=null; try{ const context=await liff.getContext(); userId=context.userId||null; }catch(e){ console.warn('❌ 無法取得 userId'); } const payload={source:'LIFF',userId,items:queue}; dbg('📦 payload:\n'+JSON.stringify(payload,null,2)); try{ const res=await fetch(basePostUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); const json=await res.json(); if(json.status==='OK'){ toast('✅ 已送出！'); queue.length=0; renderList(); try{liff.closeWindow();}catch(e){} }else{ dbg('[ERR] '+JSON.stringify(json)); toast('❌ 送出失敗（非 OK）'); } }catch(err){ console.error('❌ 發送失敗:',err); dbg('[ERR] '+(err.message||JSON.stringify(err))); toast('❌ 發送失敗'); } }); }
-
+function renderList(){ const box=$(\'#list\'); if(!queue.length) { box.innerHTML=\'<div class="hint">目前沒有待送出的資料。</div>\'; return; } box.innerHTML = queue.map((it,i)=>`<div class="row" style="justify-content:space-between;border-bottom:1px dashed #e6ecf7;padding:10px 0;"><div>${it.metric}：<b>${it.value}</b> ${it.unit||\'\'} ${it.ctx?`<span class="hint">(${it.ctx})</span>`:\'\'}</div><button class="btn ghost" onclick="queue.splice(${i},1);renderList()">移除</button></div>`).join(\'\'); }
+function addItem(item){ queue.push(item); renderList(); toast(\'已加入清單\'); }
+function initTabs(){ document.querySelectorAll(\'.tab\').forEach(btn=>{ btn.addEventListener(\'click\', ()=>{ document.querySelectorAll(\'.tab\').forEach(b=>b.classList.remove(\'active\')); btn.classList.add(\'active\'); const pane=btn.dataset.pane; document.querySelectorAll(\'.pane\').forEach(p=>p.hidden=(p.id!==pane)); }); }); }
+function initBP(){ fillSelect($(\'#bpSys\'), CONFIG.bpSys); fillSelect($(\'#bpDia\'), CONFIG.bpDia); $(\'#btnAddBp\').addEventListener(\'click\',()=>{
+const sys=$(\'#bpSysManual\').value||$(\'#bpSys\').value; const dia=$(\'#bpDiaManual\').value||$(\'#bpDia\').value; const sysVal=isNaN(Number(sys))?midFromRange(sys):Number(sys); const diaVal=isNaN(Number(dia))?midFromRange(dia):Number(dia);
+addItem({metric:\'血壓\',value:`${sysVal}/${diaVal}`,unit:\'mmHg\',note:$(\'#note\').value,time:$(\'#when\').value}); }); }
+function initGlu(){ const ctxSel=$(\'#gluCtx\'), rangeSel=$(\'#gluRange\'); const updateRanges=()=>fillSelect(rangeSel, ctxSel.value===\'空腹\'?CONFIG.gluFPG:CONFIG.gluPPG);
+ctxSel.addEventListener(\'change\',updateRanges); updateRanges(); $(\'#btnAddGlu\').addEventListener(\'click\',()=>{ const ctx=ctxSel.value; let v=$(\'#gluManual\').value; if(!v)v=midFromRange(rangeSel.value);
+addItem({metric:ctx===\'空腹\'?\'空腹血糖\':\'飯後血糖\',value:Number(v),unit:\'mg/dL\',ctx,note:$(\'#note\').value,time:$(\'#when\').value}); }); }
+function initOthers(){ const grid=$(\'#quickGrid\'); grid.innerHTML=\'\'; CONFIG.quickOthers.forEach(block=>{ const wrap=document.createElement(\'div\'); wrap.className=\'card\'; wrap.style.margin=\'0\'; wrap.style.gridColumn=\'1/-1\'; const title=(block.metric===\'睡眠\')?\'睡眠品質（1–10 分）\':`${block.metric}（${block.unit}）`; wrap.innerHTML=`<div class="title">${title}</div><div class="grid"></div>`; const g=wrap.querySelector(\'.grid\'); block.choices.forEach(v=>{ const b=document.createElement(\'button\'); b.className=\'btn ghost\'; b.textContent=v+block.unit; b.addEventListener(\'click\', ()=>addItem({metric:block.metric,value:v,unit:block.unit,note:$(\'#note\').value,time:$(\'#when\').value})); g.appendChild(b); }); grid.appendChild(wrap); }); }
+function initSubmit(){ $(\'#btnClear\').addEventListener(\'click\', ()=>{ queue.length=0; renderList(); }); $(\'#btnSubmit\').addEventListener(\'click\',async()=>{ if(!queue.length)return toast(\'清單是空的\'); let userId=null; try{ const context=await liff.getContext(); userId=context.userId||null; }catch(e){ console.warn(\'❌ 無法取得 userId\'); } const payload={source:\'LIFF\',userId,items:queue}; dbg(\'📦 payload:\n\'+JSON.stringify(payload,null,2)); try{ const res=await fetch(basePostUrl(),{method:\'POST\',headers:{\'Content-Type\':\'application/json\'},body:JSON.stringify(payload)}); const json=await res.json(); if(json.status===\'OK\'){ toast(\'✅ 已送出！\'); queue.length=0; renderList(); try{liff.closeWindow();}catch(e){} }else{ dbg(\'[ERR] \'+JSON.stringify(json)); toast(\'❌ 送出失敗（非 OK）\'); } }catch(err){ console.error(\'❌ 發送失敗:\',err); dbg(\'[ERR] \'+(err.message||JSON.stringify(err))); toast(\'❌ 發送失敗\'); } }); }
 function boot(){ initTabs(); initBP(); initGlu(); initOthers(); initSubmit(); renderList(); }
-window.addEventListener('DOMContentLoaded', async () => {
-  const LIFF_ID = '2008049339-GDpDJd3j';
-  await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
-  if (!liff.isLoggedIn()) {
-    liff.login({ redirectUri: location.href.split('#')[0] });
-  } else {
-    boot();
-  }
+window.addEventListener(\'DOMContentLoaded\', async () => {
+const LIFF_ID = \'2008049339-GDpDJd3j\';
+await liff.init({ liffId: LIFF_ID, withLoginOnExternalBrowser: true });
+if (!liff.isLoggedIn()) {
+liff.login({ redirectUri: location.href.split(\'#\')[0] });
+} else {
+boot();
+}
 });
-window.addEventListener('error', e => dbg('[ERROR] ' + (e.message || e.toString())));
-const toast = t => {const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1200);};
-const dbg = t => {const el=$('#debug');if(!el)return;el.hidden=false;el.textContent=String(t);};
-const queue=[];
-function fillSelect(sel, arr){sel.innerHTML=arr.map(v=>`<option>${v}</option>`).join('');}
-function midFromRange(label){if(typeof label==='number')return label;label=String(label||'');if(label.startsWith('≥'))return Number(label.replace(/[^\d]/g,''))+5;if(label.includes('–')){const[a,b]=label.split('–').map(Number);return Math.round((a+b)/2);}return Number(label.replace(/[^\d]/g,''))||0;}
-function basePostUrl(){return "https://script.google.com/macros/s/AKfycbz2gRMRHwSbecpF5L95pdBdHqahNmx9wmCAItRW6GlTI-xRcXfzMRTGSqNAvgwjHoV9dA/exec";}
-function renderList(){const box=$('#list');if(!queue.length){box.innerHTML='<div class="hint">目前沒有待送出的資料。</div>';return;}box.innerHTML=queue.map((it,i)=>`<div class="row" style="justify-content:space-between;border-bottom:1px dashed #e6ecf7;padding:10px 0;"><div>${it.metric}：<b>${it.value}</b> ${it.unit||''} ${it.ctx?`<span class="hint">(${it.ctx})</span>`:''}</div><button class="btn ghost" onclick="queue.splice(${i},1);renderList()">移除</button></div>`).join('');}
-function addItem(item){queue.push(item);renderList();toast('已加入清單');}
-function initTabs(){document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const pane=btn.dataset.pane;document.querySelectorAll('.pane').forEach(p=>p.hidden=(p.id!==pane));});});}
-function initBP(){fillSelect($('#bpSys'),CONFIG.bpSys);fillSelect($('#bpDia'),CONFIG.bpDia);$('#btnAddBp').addEventListener('click',()=>{const sys=$('#bpSysManual').value||$('#bpSys').value;const dia=$('#bpDiaManual').value||$('#bpDia').value;const sysVal=isNaN(Number(sys))?midFromRange(sys):Number(sys);const diaVal=isNaN(Number(dia))?midFromRange(dia):Number(dia);addItem({metric:'血壓',value:`${sysVal}/${diaVal}`,unit:'mmHg',note:$('#note').value,time:$('#when').value});});}
-function initGlu(){const ctxSel=$('#gluCtx'),rangeSel=$('#gluRange');const updateRanges=()=>fillSelect(rangeSel,ctxSel.value==='空腹'?CONFIG.gluFPG:CONFIG.gluPPG);ctxSel.addEventListener('change',updateRanges);updateRanges();$('#btnAddGlu').addEventListener('click',()=>{const ctx=ctxSel.value;let v=$('#gluManual').value;if(!v)v=midFromRange(rangeSel.value);addItem({metric:ctx==='空腹'?'空腹血糖':'飯後血糖',value:Number(v),unit:'mg/dL',ctx,note:$('#note').value,time:$('#when').value});});}
-function initOthers(){const grid=$('#quickGrid');grid.innerHTML='';CONFIG.quickOthers.forEach(block=>{const wrap=document.createElement('div');wrap.className='card';wrap.style.margin='0';wrap.style.gridColumn='1/-1';const title=(block.metric==='睡眠')?'睡眠品質（1–10 分）':`${block.metric}（${block.unit}）`;wrap.innerHTML=`<div class="title">${title}</div><div class="grid"></div>`;const g=wrap.querySelector('.grid');block.choices.forEach(v=>{const b=document.createElement('button');b.className='btn ghost';b.textContent=v+block.unit;b.addEventListener('click',()=>addItem({metric:block.metric,value:v,unit:block.unit,note:$('#note').value,time:$('#when').value}));g.appendChild(b);});grid.appendChild(wrap);});}
-function initSubmit(){$('#btnClear').addEventListener('click',()=>{queue.length=0;renderList();});$('#btnSubmit').addEventListener('click',async()=>{if(!queue.length)return toast('清單是空的');let userId=null;try{const context=await liff.getContext();userId=context.userId||null;}catch(e){console.warn('❌ 無法取得 userId，將使用 null');}const payload={source:'LIFF',userId,items:queue};dbg('📦 payload:\n'+JSON.stringify(payload,null,2));try{const res=await fetch(basePostUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const json=await res.json();if(json.status==='OK'){toast('✅ 已送出！');queue.length=0;renderList();try{liff.closeWindow();}catch(e){}}else{dbg('[ERR] '+JSON.stringify(json));toast('❌ 送出失敗（非 OK）');}}catch(err){console.error('❌ 發送失敗:',err);dbg('[ERR] '+(err.message||JSON.stringify(err)));toast('❌ 發送失敗');}});}
-function boot(){initTabs();initBP();initGlu();initOthers();initSubmit();renderList();}
-window.addEventListener('DOMContentLoaded',async()=>{const LIFF_ID='2008049339-GDpDJd3j';await liff.init({liffId:LIFF_ID,withLoginOnExternalBrowser:true});if(!liff.isLoggedIn()){liff.login({redirectUri:location.href.split('#')[0]});}else{boot();}});
-window.addEventListener('error',e=>dbg('[ERROR] '+(e.message||e.toString())));
+window.addEventListener(\'error\', e => dbg(\'[ERROR] \' + (e.message || e.toString())));
 </script>
-
 </body>
 </html>
+
